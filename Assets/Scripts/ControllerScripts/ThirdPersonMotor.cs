@@ -31,6 +31,18 @@ namespace ControllerScripts
         public float crouchHeight = 0.9f;  
         public float standingHeight = 1.8f;  
         public LayerMask crouchObstructionLayers;
+        
+        [Header("- Sliding")]
+        public float slideSpeed = 1.2f;
+        public float slideTime = 1.0f;
+        public bool canSlide = true;
+        public float slideCoolDown = 0.5f;
+
+        [Header("- Stamina")] 
+        public float stamina = 100.0f;
+        public float staminaMax = 100.0f;
+        public float staminaDrainRate = 10f;
+        public float staminaRegenRate = 5.0f;
    
 
         [Header("- Airborne")]
@@ -90,6 +102,7 @@ namespace ControllerScripts
         internal bool isGrounded { get; set; }
         internal bool isSprinting { get; set; }
         internal bool isCrouching { get; set; }
+        internal bool isSliding { get; set; }
         public bool stopMove { get; protected set; }
 
         internal float inputMagnitude;                      // sets the inputMagnitude to update the animations in the animator controller
@@ -159,6 +172,7 @@ namespace ControllerScripts
             CheckSlopeLimit();
             ControlJumpBehaviour();
             AirControl();
+            StaminaUpdate();
         }
 
         #region Locomotion
@@ -383,6 +397,29 @@ namespace ControllerScripts
             var dir = isStrafing && input.magnitude > 0 ? (transform.right * input.x + transform.forward * input.z).normalized : transform.forward;
             var movementAngle = Vector3.Angle(dir, groundHit.normal) - 90;
             return movementAngle;
+        }
+        
+        private void StaminaUpdate()
+        {
+            if (isSprinting && stamina > 0)
+            {
+                stamina -= staminaDrainRate * Time.deltaTime;
+                if (stamina <= 0)
+                {
+                    stamina = 0;
+                    isSprinting = false;
+                    animator.SetBool("IsSprinting", isSprinting);
+                    
+                }
+            }
+            else if (!isSprinting && stamina < staminaMax)
+            {
+                stamina += staminaRegenRate * Time.deltaTime;
+                if (stamina >= staminaMax)
+                {
+                    stamina = staminaMax;
+                }
+            }
         }
 
         #endregion

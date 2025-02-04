@@ -1,9 +1,14 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 namespace ControllerScripts
 {
     public class ThirdPersonController : ThirdPersonAnimator
     {
+        private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
+        private static readonly int IsSliding = Animator.StringToHash("IsSliding");
+
+
         public virtual void ControlAnimatorRootMotion()
         {
             if (!this.enabled) return;
@@ -87,7 +92,7 @@ namespace ControllerScripts
         {
             if (isCrouching) return;
             
-            var sprintConditions = (input.sqrMagnitude > 0.1f && isGrounded &&
+            var sprintConditions = (input.sqrMagnitude > 0.1f && stamina > 0 && isGrounded &&
                 !(isStrafing && !strafeSpeed.walkByDefault && (horizontalSpeed >= 0.5 || horizontalSpeed <= -0.5 || verticalSpeed <= 0.1f)));
 
             if (value && sprintConditions)
@@ -136,11 +141,15 @@ namespace ControllerScripts
 
         public virtual void Crouch()
         {
+            if (isSprinting)
+            {
+                StartSlide();
+                return;
+            }
             if (!isCrouching)
             {
                 isCrouching = true;
-                // _capsuleCollider.height = crouchHeight;
-                animator.SetBool("IsCrouching", isCrouching);
+                animator.SetBool(IsCrouching, isCrouching);
             }
             else
             {
@@ -148,10 +157,39 @@ namespace ControllerScripts
                         crouchObstructionLayers))
                 {
                     isCrouching = false;
-                    // _capsuleCollider.height = standingHeight;
-                    animator.SetBool("IsCrouching", isCrouching);
+                    animator.SetBool(IsCrouching, isCrouching);
                 }
             }
         }
+
+        public virtual void StartSlide()
+        {
+            if (isSliding || !canSlide) return;
+            
+            isSliding = true;
+            canSlide = false;
+            animator.SetBool(IsSliding, isSliding);
+            moveSpeed *= slideSpeed;
+            
+            StartCoroutine(EndSlide(sprintSpeed));
+            StartCoroutine(SlideCoolDown());
+        }
+
+        private IEnumerator EndSlide(float speed)
+        {
+            yield return new WaitForSeconds(slideTime);
+            
+            isSliding = false;
+            moveSpeed = speed;
+            animator.SetBool(IsSliding, isSliding);
+        }
+
+        private IEnumerator SlideCoolDown()
+        {
+            yield return new WaitForSeconds(slideCoolDown);
+            canSlide = true;
+        }
+
+
     }
 }

@@ -136,7 +136,10 @@ namespace ControllerScripts
         {
             if (Input.GetKeyDown(crouchInput))
             {
-                cc.Crouch();
+                if (cc.isSprinting && !cc.isSliding)
+                    cc.Crouch();
+                else if (!cc.isSliding)
+                    cc.Crouch();
             }
         }
 
