@@ -16,6 +16,8 @@ namespace PlayerScripts.Murderer
         
         public bool Run { get; private set; }
         
+        public bool Jump { get; private set; }
+        
         private InputActionMap _currentMap;
         
         private InputAction _moveAction;
@@ -23,6 +25,8 @@ namespace PlayerScripts.Murderer
         private InputAction _lookAction;
         
         private InputAction _runAction;
+        
+        private InputAction _jumpAction;
 
         private void Awake()
         {
@@ -30,14 +34,17 @@ namespace PlayerScripts.Murderer
             _moveAction = _currentMap.FindAction("Move");
             _lookAction = _currentMap.FindAction("Look");
             _runAction = _currentMap.FindAction("Run");
+            _jumpAction = _currentMap.FindAction("Jump");
             
             _moveAction.performed += OnMove;
             _lookAction.performed += OnLook;
             _runAction.performed += OnRun;
+            _jumpAction.performed += OnJump;
             
             _moveAction.canceled += OnMove;
             _lookAction.canceled += OnLook;
             _runAction.canceled += OnRun;
+            _jumpAction.canceled += OnJump;
             
         }
 
@@ -55,6 +62,11 @@ namespace PlayerScripts.Murderer
         private void OnRun(InputAction.CallbackContext context)
         {
             Run = context.ReadValueAsButton();
+        }
+
+        private void OnJump(InputAction.CallbackContext context)
+        {
+            Jump = context.ReadValueAsButton();
         }
 
         private void OnEnable()
