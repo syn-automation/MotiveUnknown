@@ -24,6 +24,7 @@ namespace PlayerScripts.Murderer
         
         private bool _hasAnimator;
         private bool isGrounded;
+        private bool isInspecting = false;
         
         private int _xVelHash;
         private int _yVelHash;
@@ -69,7 +70,7 @@ namespace PlayerScripts.Murderer
 
         private void Move()
         {
-            if (!_hasAnimator)
+            if (!_hasAnimator || isInspecting)
             {
                 return;
             }
@@ -131,7 +132,7 @@ namespace PlayerScripts.Murderer
 
         private void SampleGround()
         {
-            if (!_hasAnimator) return;
+            if (!_hasAnimator || isInspecting) return;
 
             if (Physics.Raycast(_rigidbody.worldCenterOfMass, Vector3.down, out _, distanceToGround + 0.1f,
                     groundLayerMask))
@@ -152,6 +153,25 @@ namespace PlayerScripts.Murderer
         {
             _animator.SetBool(_fallingHash, !isGrounded);
             _animator.SetBool(_groundHash, isGrounded);
+        }
+
+        public void StartInspection()
+        {
+            isInspecting = true;
+            _rigidbody.isKinematic = true;
+            _animator.SetBool(_fallingHash, false);
+            _animator.SetBool(_groundHash, true);
+        }
+
+        public void StopInspection()
+        {
+            isInspecting = false;
+            _rigidbody.isKinematic = false;
+        }
+
+        public Transform GetCameraTransform()
+        {
+            return Camera;
         }
     }
 }
