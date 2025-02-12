@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc1b7e7efca016f4abd303a7e09c25e7, type: 3}
   m_Name: Bottle
   m_EditorClassIdentifier: 
-  itemName: 
-  itemID: 0
+  itemName: Large Bottle
+  itemID: 1
   icon: {fileID: 0}
   description: 
-  itemType: 0
-  isStackable: 0
-  maxStackSize: 0
+  itemType: 1
+  isStackable: 1
+  maxStackSize: 3
+  prefab: {fileID: 2725077392764395422, guid: 4d34e066bb50fc045857a349e8fbed1e, type: 3}

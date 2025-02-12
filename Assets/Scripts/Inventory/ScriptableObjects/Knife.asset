@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc1b7e7efca016f4abd303a7e09c25e7, type: 3}
   m_Name: Knife
   m_EditorClassIdentifier: 
-  itemName: 
-  itemID: 0
+  itemName: Kitchen Knife
+  itemID: 2
   icon: {fileID: 0}
-  description: 
+  description: Kitchen Knife
   itemType: 0
   isStackable: 0
   maxStackSize: 0
+  prefab: {fileID: 0}
